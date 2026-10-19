@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Nacron · Deck do Dev</title>
+<meta name="description" content="Portfólio do Nacron: dev full-stack no time da GGSTORE.">
+<meta name="theme-color" content="#0a1222">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=VT323&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<canvas id="dust" aria-hidden="true"></canvas>
+<header class="hud">
+  <span class="p1">P1</span>
+  <span id="hud-name"></span>
+  <span id="hud-lv"></span>
+  <span class="xp"><span class="bar"><i id="hud-xp"></i></span><span id="hud-xpt"></span></span>
+  <nav>
+    <a href="#deck">deck</a>
+    <a href="#inventario">inventário</a>
+    <a href="#side-quests">side quests</a>
+    <a href="#quests">quests</a>
+    <a href="#party">party</a>
+  </nav>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <div class="tcg player holo tilt" id="player"></div>
+    <div class="hero-text">
+      <span class="label" id="hero-class"></span>
+      <div class="id">
+        <h1 id="hero-title"></h1>
+        <span class="aka" id="hero-aka"></span>
+      </div>
+      <p id="hero-bio"></p>
+      <div class="actions">
+        <a class="btn solid" href="#deck">Ver o deck</a>
+        <a class="btn" href="#party">Chamar pra party</a>
+      </div>
+      <span class="hint">↑ ↑ ↓ ↓ ← → ← → B A</span>
+    </div>
+  </section>
+
+  <section id="deck">
+    <div class="sec-head">
+      <div>
+        <span class="label">Deck principal</span>
+        <h2>Projetos</h2>
+        <p>Clica numa carta pra virar. O custo de mana é o tamanho do desafio.</p>
+      </div>
+      <div class="filters" id="filters"></div>
+    </div>
+    <div class="deck" id="deckGrid"></div>
+  </section>
+
+  <div class="duo">
+  <section id="inventario">
+    <div class="sec-head">
+      <div>
+        <span class="label">Inventário</span>
+        <h2>Stack equipada</h2>
+        <p>O número no canto é o nível do item, de 1 a 10. Passa o mouse pra ler a descrição.</p>
+      </div>
+    </div>
+    <div class="inv" id="inv"></div>
+    <div class="legend">
+      <span style="--c:var(--metal)">comum</span>
+      <span style="--c:var(--water)">raro</span>
+      <span style="--c:var(--arcane)">épico</span>
+      <span style="--c:var(--gold)">lendário</span>
+    </div>
+  </section>
+
+  <section id="side-quests">
+    <div class="sec-head">
+      <div>
+        <span class="label">Side quests</span>
+        <h2>Fora do código</h2>
+        <p>O que eu faço quando não tô escrevendo script.</p>
+      </div>
+    </div>
+    <div class="side" id="sideGrid"></div>
+  </section>
+  </div>
+
+  <div class="duo">
+
+  <section id="quests">
+    <div class="sec-head">
+      <div>
+        <span class="label">Log de quests</span>
+        <h2>Trajetória</h2>
+      </div>
+    </div>
+    <ol class="quests" id="questList"></ol>
+  </section>
+
+  <section id="party">
+    <div class="party">
+      <div>
+        <span class="label">Procurando party</span>
+        <h2>Bora construir algo junto?</h2>
+        <p id="party-text"></p>
+        <div class="mail">
+          <code id="mail"></code>
+          <button class="btn" id="copy" type="button">Copiar e-mail</button>
+        </div>
+      </div>
+      <div class="links" id="links"></div>
+    </div>
+  </section>
+  </div>
+
+  <footer>
+    <span id="foot-l"></span>
+    <span>save salvo · continuar? 9…</span>
+  </footer>
+</main>
+
+<div class="toast" id="toast" role="status"></div>
+<script src="script.js"></script>
+</body>
+</html>
