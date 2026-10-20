@@ -77,7 +77,7 @@ function renderPlayer(){
 }
 
 function renderSide(){
-  $("#sideGrid").innerHTML = DATA.side.map(([t,d,c],i)=>`<div class="sq" style="--c:var(--${c});--n:${i}"><canvas data-seed="${esc(t)}" data-c="--${c}"></canvas><div><h3>${esc(t)}</h3><p>${esc(d)}</p></div></div>`).join("");
+  $("#sideGrid").innerHTML = DATA.side.map(([t,d,c],i)=>`<div class="sq" style="--c:var(--${c});--n:${i};--r:${[1.6,-2.2,2.4,-1.4][i % 4]}deg;--dl:-${(i * .9).toFixed(1)}s"><canvas data-seed="${esc(t)}" data-c="--${c}"></canvas><div><h3>${esc(t)}</h3><p>${esc(d)}</p></div></div>`).join("");
   $("#sideGrid").querySelectorAll("canvas").forEach(c=>sprite(c,c.dataset.seed,c.dataset.c));
 }
 
