@@ -9,9 +9,9 @@ const DATA = {
   xp: 68,
   stats: [["LUA",9,"Scripts em Lua pra FiveM"],["API",8,"APIs e integrações"],["NUI",7,"Interfaces dentro do jogo"],["SOM",8,"Áudio e som 3D"],["INS",10,"Ideias malucas"]],
   projects: [
-    {name:"GGFY",el:"water",cost:7,type:"Player de música",rar:"Lendária",flavor:"Player de música <b>dentro do FiveM</b> com fila, playlist e controle sem sair do servidor.",atk:"LUA",def:"NUI",stack:["Lua","JavaScript","NUI"],bullets:["Fila e playlist por jogador","Interface NUI integrada ao jogo","Toca direto do link, sem embed"],link:"#"},
-    {name:"GGSound",el:"arcane",cost:8,type:"Áudio 3D",rar:"Lendária",flavor:"Música em <b>3D</b> no mapa que aumenta quando você chega perto e some quando vai embora.",atk:"3D",def:"SOM",stack:["Lua","Web Audio","API"],bullets:["Som posicional no mundo do jogo","Volume pela distância do jogador","Sincronizado entre quem está por perto"],link:"#"},
-    {name:"YT Direct",el:"fire",cost:5,type:"API REST",rar:"Épica",flavor:"Busca músicas do <b>YouTube</b> pelo nome e devolve o link direto do áudio, pronto pra tocar.",atk:"GET",def:"MP3",stack:["Node.js","REST"],bullets:["Pesquisa pelo nome da música","Retorna o link direto do áudio","Resposta em JSON pra qualquer script"],link:"#"},
+    {name:"GGFY",el:"water",cost:7,type:"Player de música",rar:"Lendária",flavor:"Um player de música pro <b>FiveM</b>. Dá pra ouvir, montar playlist e controlar tudo sem sair do jogo.",atk:"LUA",def:"NUI",stack:["Lua","JavaScript","NUI"],bullets:["Fila e playlist por jogador","Interface NUI integrada ao jogo","Toca direto do link, sem embed"],link:"#"},
+    {name:"GGSound",el:"arcane",cost:8,type:"Áudio 3D",rar:"Lendária",flavor:"Sistema de som <b>3D</b> pro FiveM. A música toca num ponto do mapa e o volume muda conforme você chega perto.",atk:"3D",def:"SOM",stack:["Lua","Web Audio","API"],bullets:["Som posicional no mundo do jogo","Volume pela distância do jogador","Sincronizado entre quem está por perto"],link:"#"},
+    {name:"YT Direct",el:"fire",cost:5,type:"API REST",rar:"Épica",flavor:"Uma API que procura músicas no <b>YouTube</b> pelo nome e devolve o link do áudio pra tocar direto.",atk:"GET",def:"MP3",stack:["Node.js","REST"],bullets:["Pesquisa pelo nome da música","Retorna o link direto do áudio","Resposta em JSON pra qualquer script"],link:"#"},
     {name:"???",el:"metal",cost:"?",type:"Ideia maluca",rar:"Em forja",flavor:"A próxima carta ainda tá na bancada. Spoiler: <b>vai ser estranha</b>.",atk:"?",def:"?",stack:["Em breve"],bullets:["Rascunho no caderno","Protótipo quebrando","Logo logo no deck"],link:"#"}
   ],
   items: [
@@ -31,8 +31,10 @@ const DATA = {
     ["Ideias malucas","Se parece impossível, já virou projeto.","arcane"]
   ],
   quests: [
-    {y:"agora",t:"Dev no time GGSTORE",at:"GGSTORE",url:"https://ggstore.dev.br/",d:"Scripts, APIs e sistemas de áudio pra servidores FiveM. Autor do GGFY e do GGSound.",active:true},
-    {y:"★",t:"Projetos próprios",at:"independente",d:"APIs e ferramentas de mídia, como a YT Direct."}
+    {now:true,tag:"Quest principal",c:"gold",icon:"sword",t:"Dev no time GGSTORE",at:"GGSTORE",url:"https://ggstore.dev.br/",d:"Desenvolvo scripts, APIs e sistemas de áudio pra servidores FiveM.",loot:["GGFY","GGSound"]},
+    {tag:"Conquista",c:"arcane",icon:"shield",t:"Certificado Profissional de Segurança Cibernética",at:"Google",d:"Fundamentos de segurança, redes, Linux, SQL e Python.",loot:["Segurança"]},
+    {tag:"Side quest",c:"water",icon:"scroll",t:"Projetos próprios",at:"independente",d:"APIs e ferramentas de mídia feitas por conta própria.",loot:["YT Direct"]},
+    {tag:"Treinamento",c:"metal",icon:"book",t:"Informática Avançada e Processamento de Dados",at:"cursos",d:"A base que veio antes de tudo.",loot:[]}
   ],
   partyText: "Tem um projeto, uma API ou uma ideia maluca pra tirar do papel? Me chama.",
   email: "nacron14@gmail.com",
@@ -66,14 +68,15 @@ function sprite(canvas,seed,color){
 function renderPlayer(){
   const p = $("#player");
   p.style.setProperty("--c","var(--gold)");
-  p.innerHTML = `<div class="face-in">
+  p.innerHTML = `${["tl","tr","bl","br"].map(k=>`<i class="cn ${k}">${CORNER}</i>`).join("")}<div class="face-in">
     <div class="top"><h3>${esc(DATA.name)}</h3><span class="cost">${DATA.level}</span></div>
-    <div class="art"><canvas></canvas></div>
-    <div class="typeline"><span id="regname"></span><span class="rar">Herói</span></div>
+    <div class="art"><canvas class="scene"></canvas><canvas class="mob"></canvas></div>
+    <div class="typeline"><span><i class="emb">${svgPix(["X..X..X","XX.X.XX","XXXXXXX","XYXYXYX","XXXXXXX"],{X:"var(--gold)",Y:"#fff6dc"})}</i><span id="regname"></span></span><span class="rar"><i class="gem" style="--g:var(--gold)"></i>Herói</span></div>
     <div class="stats">${DATA.stats.map(([k,v,t])=>`<div class="stat" title="${esc(t)}"><span>${k}</span><span class="b"><i style="--v:${v*10}%"></i></span><span>${v}</span></div>`).join("")}</div>
-    <div class="foot"><span>#001/001</span><span class="pt">${DATA.level}/${DATA.xp}</span></div>
+    <div class="foot"><span class="set">NCR · 001/${String(DATA.projects.length + 1).padStart(3,"0")} · 1ª ed.</span><span class="pt">${DATA.level}/${DATA.xp}</span></div>
   </div>`;
-  sprite(p.querySelector("canvas"),DATA.name,"--gold");
+  sprite(p.querySelector("canvas.mob"),DATA.name,"--gold");
+  scene(p.querySelector("canvas.scene"),"gold",DATA.name);
 }
 
 function renderSide(){
@@ -139,6 +142,22 @@ function scene(canvas,el,seed){
   canvas.width = W;canvas.height = H;
   const c = getComputedStyle(document.documentElement).getPropertyValue("--" + el).trim();
   const dot = (x,y,col) => {ctx.fillStyle = col;ctx.fillRect(x | 0,y | 0,1,1)};
+  if (el === "gold"){
+    const n = ctx.createLinearGradient(0,0,0,H);
+    n.addColorStop(0,"#060a17");
+    n.addColorStop(1,"#1a3a48");
+    ctx.fillStyle = n;
+    ctx.fillRect(0,0,W,H);
+    for (let i=0;i<14;i++) dot(r() * W,r() * H * .6,r() > .7 ? "#f1d58e" : "#dfe7ffaa");
+    for (let y=-3;y<=3;y++) for (let x=-3;x<=3;x++) if (x * x + y * y <= 10) dot(33 + x,6 + y,x * x + y * y > 6 ? "#d8cfa8" : "#efe6c4");
+    ctx.fillStyle = "#0f1e30";
+    for (let x=0;x<W;x++) ctx.fillRect(x,21 + Math.round(Math.sin(x * .25) * 1.5),1,H);
+    [[6,14,4],[11,10,5],[17,14,4],[10,7,2]].forEach(([x,y,w])=>{ctx.fillRect(x,y,w,H);for (let i=0;i<w;i+=2) ctx.fillRect(x + i,y - 1,1,1)});
+    [[7,17],[13,13],[12,17],[18,17]].forEach(([x,y])=>dot(x,y,"#f1c560"));
+    ctx.fillStyle = "#0a1522";
+    ctx.fillRect(0,27,W,3);
+    return;
+  }
   const sky = ctx.createLinearGradient(0,0,0,H);
   sky.addColorStop(0,hexMix(c,"#0b0c11",.85));
   sky.addColorStop(1,hexMix(c,"#0b0c11",.55));
@@ -243,10 +262,23 @@ function renderInv(){
   $("#inv").querySelectorAll("canvas").forEach(c=>sprite(c,c.dataset.seed,c.dataset.c));
 }
 
+const QICON = {
+  sword:["......X",".....X.","....X..","X..X...",".XX....",".XX....","X..X..."],
+  shield:["XXXXXXX","XYYYYYX","XYYXYYX","XYXXXYX",".XYXYX.","..XYX..","...X..."],
+  scroll:[".XXXXX.","XYYYYYX",".XYYYX.",".XYYYX.",".XYYYX.","XYYYYYX",".XXXXX."],
+  book:["XXX.XXX","XYX.XYX","XYX.XYX","XYX.XYX","XYXXXYX","XXX.XXX","......."]
+};
 function renderQuests(){
-  $("#questList").innerHTML = DATA.quests.map(q=>`<li class="${q.active?"active":""}">
-    <time>${q.y}</time><span class="chk">${q.active?"":"x"}</span>
-    <div><h3>${esc(q.t)} <span>@ ${q.url ? `<a href="${esc(q.url)}" target="_blank" rel="noopener">${esc(q.at)}</a>` : esc(q.at)}</span></h3><p>${esc(q.d)}</p></div>
+  $("#questList").innerHTML = DATA.quests.map(q=>`<li class="q ${q.now ? "now" : "done"}" style="--c:var(--${q.c})">
+    <span class="node">${svgPix(QICON[q.icon],{X:`var(--${q.c})`,Y:"#fff6dc"})}</span>
+    <div class="qcard">
+      <div class="qhead"><span class="qtag">${esc(q.tag)}</span><span class="qstate">${q.now ? "Em andamento" : "Concluída"}</span></div>
+      <h3>${esc(q.t)}</h3>
+      <span class="qat">@ ${q.url ? `<a href="${esc(q.url)}" target="_blank" rel="noopener">${esc(q.at)}</a>` : esc(q.at)}</span>
+      <p>${esc(q.d)}</p>
+      ${q.now ? `<div class="qbar"><i></i></div>` : ""}
+      ${q.loot.length ? `<div class="qloot"><span>Recompensa</span>${q.loot.map(l=>`<b>${esc(l)}</b>`).join("")}</div>` : ""}
+    </div>
   </li>`).join("");
 }
 
