@@ -169,7 +169,9 @@ function applyFilter(f){
 }
 
 function renderInv(){
-  $("#inv").innerHTML = DATA.items.map(([ab,n,d,lv,r])=>`<div class="item${r==="gold"?" lg":""}" tabindex="0" style="--c:var(--${r})">${esc(ab)}<small>${lv}</small><span class="tip"><b>${esc(n)}</b>${esc(d)}</span></div>`).join("");
+  const tilt = [-2.5,1.8,-1.2,2.6,-1.8,1.1,-2.8,2.1];
+  $("#inv").innerHTML = DATA.items.map(([ab,n,d,lv,r],i)=>`<div class="loot${r==="gold"?" lg":""}" tabindex="0" style="--c:var(--${r});--r:${tilt[i % tilt.length]}deg;--dl:-${(i * .7).toFixed(1)}s;--s:${(.86 + lv * .03).toFixed(2)}"><canvas data-seed="${esc(n)}" data-c="--${r}"></canvas><span class="txt"><span class="nm">${esc(n)}</span><span class="pips" aria-label="nível ${lv} de 10">${Array.from({length:10},(_,k)=>`<i${k < lv ? ' class="on"' : ""}></i>`).join("")}</span></span><span class="tip"><b>${esc(n)} · nível ${lv}</b>${esc(d)}</span></div>`).join("");
+  $("#inv").querySelectorAll("canvas").forEach(c=>sprite(c,c.dataset.seed,c.dataset.c));
 }
 
 function renderQuests(){
@@ -310,7 +312,7 @@ function reveal(){
     el.classList.add("rv-in");
     el.addEventListener("animationend",()=>el.classList.remove("rv-in"),{once:true});
   }),{threshold:.15});
-  [".sec-head",".slot",".item",".sq",".quests li",".party",".legend"].forEach(s=>document.querySelectorAll(s).forEach((el,i)=>{
+  [".sec-head",".slot",".loot",".sq",".quests li",".party",".legend"].forEach(s=>document.querySelectorAll(s).forEach((el,i)=>{
     if (el.getBoundingClientRect().top < innerHeight * .9) return;
     if (el.classList.contains("slot")) el.classList.remove("deal");
     else {
@@ -358,7 +360,7 @@ const L = {
 };
 const wait = ms => new Promise(r=>setTimeout(r,ms));
 const pick = a => a[Math.random() * a.length | 0];
-const PET_TARGETS = ".slot:not(.gone),.sq,.item,#player,.hero-text h1,.hero-text p,.hint,.actions .btn,.sec-head h2,.sec-head p,.chip,.inv,.legend span,.quests li,.party h2,.party p,.mail code,.links .btn,footer span";
+const PET_TARGETS = ".slot:not(.gone),.sq,.loot,#player,.hero-text h1,.hero-text p,.hint,.actions .btn,.sec-head h2,.sec-head p,.chip,.inv,.legend span,.quests li,.party h2,.party p,.mail code,.links .btn,footer span";
 
 class Actor{
   constructor(frames,w,h,pal = {}){
