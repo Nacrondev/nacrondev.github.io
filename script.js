@@ -36,7 +36,7 @@ const DATA = {
     {tag:"Side quest",c:"water",icon:"scroll",t:"Projetos próprios",at:"independente",d:"APIs e ferramentas de mídia feitas por conta própria.",loot:["YT Direct"]},
     {tag:"Treinamento",c:"metal",icon:"book",t:"Informática Avançada e Processamento de Dados",at:"cursos",d:"A base que veio antes de tudo.",loot:[]}
   ],
-  partyText: "Tem um projeto, uma API ou uma ideia maluca pra tirar do papel? O slot do P2 tá livre.",
+  partyText: "Tem um projeto, uma API ou uma ideia maluca pra tirar do papel? Me chama.",
   email: "nacron14@gmail.com",
   links: [["GGSTORE","https://ggstore.dev.br/"],["GitHub","https://github.com/Nacrondev"]]
 };
@@ -111,7 +111,6 @@ function renderHero(){
   fadeWords($("#hero-bio"),1700,40);
   $("#hero-bio").innerHTML = DATA.bio;
   $("#party-text").textContent = DATA.partyText;
-  sprite($("#p1"),DATA.name,"--gold");
   $("#mail").textContent = DATA.email;
   $("#links").innerHTML = DATA.links.map(([t,u])=>`<a class="btn" href="${esc(u)}" target="_blank" rel="noopener">${esc(t)} ↗</a>`).join("");
   $("#foot-l").textContent = `© ${new Date().getFullYear()} ${DATA.fullName} · ${DATA.name}`;
@@ -319,18 +318,11 @@ function toast(msg){
   tt = setTimeout(()=>t.classList.remove("show"),2600);
 }
 
-function copyMail(ok){
+$("#copy").addEventListener("click",()=>{
   const sel = () => {const r = document.createRange();r.selectNodeContents($("#mail"));const s = getSelection();s.removeAllRanges();s.addRange(r);toast("> e-mail selecionado, Ctrl+C pra copiar")};
   try {
-    navigator.clipboard.writeText(DATA.email).then(()=>toast(ok),sel);
+    navigator.clipboard.writeText(DATA.email).then(()=>toast("> e-mail copiado pro inventário"),sel);
   } catch(e){sel()}
-}
-$("#copy").addEventListener("click",()=>copyMail("> e-mail copiado pro inventário"));
-$("#p2").addEventListener("click",e=>{
-  const b = e.currentTarget;
-  b.classList.add("joined");
-  sparkle(e.pageX,e.pageY,18,["#d9b45b","#fff6dc","#a96ddb"]);
-  copyMail("★ Convite aceito! E-mail copiado, me chama lá");
 });
 
 const KONAMI = ["ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowLeft","ArrowRight","ArrowLeft","ArrowRight","b","a"];

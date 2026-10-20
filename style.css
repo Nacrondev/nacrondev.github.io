@@ -41,6 +41,8 @@ a{color:var(--gold)}
 .duo{display:grid;grid-template-columns:minmax(0,1fr)}
 @media (min-width:1100px){
   .duo{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);column-gap:clamp(32px,4vw,80px);align-items:start}
+  .duo .party{grid-template-columns:minmax(0,1fr)}
+  .duo .links{flex-direction:row;flex-wrap:wrap}
 }
 h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.1}
 h2{font-size:clamp(1.6rem,3.4vw,2.2rem)}
@@ -320,30 +322,14 @@ section{padding-block:48px}
 @keyframes blink{50%{border-color:transparent}}
 
 .party{
-  display:grid;grid-template-columns:auto minmax(0,1fr);gap:28px;align-items:center;
+  display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px;align-items:center;
   padding:28px;border:2px solid var(--gold);background:rgba(0,0,0,.25);
   clip-path:polygon(16px 0,100% 0,100% calc(100% - 16px),calc(100% - 16px) 100%,0 100%,0 16px);
 }
-.slots{display:flex;flex-direction:column;align-items:center;gap:8px}
-.pslot{width:104px;padding:12px 8px 10px;border-radius:12px;display:grid;justify-items:center;gap:4px;background:var(--card);border:2px solid var(--gold);font:inherit;color:inherit}
-.pslot canvas{width:40px;height:48px;image-rendering:pixelated;animation:bob 1.2s steps(2) infinite}
-.pslot span{font:1rem/1 var(--mono);color:var(--dim)}
-.pslot b{font:700 .9rem var(--display);color:var(--ink)}
-.pslot.you{cursor:pointer;background:transparent;border-style:dashed;border-color:color-mix(in srgb,var(--gold) 55%,transparent);animation:slotpulse 1.8s ease-in-out infinite;transition:transform .3s cubic-bezier(.3,1.6,.5,1)}
-.pslot.you:hover{transform:scale(1.06) rotate(-2deg);border-style:solid}
-.pslot .qm{width:40px;height:48px;display:grid;place-items:center;font:2.6rem/1 var(--mono);color:var(--gold);animation:caret 1s steps(2) infinite}
-.pslot.you.joined{animation:none;border-style:solid;border-color:var(--earth);box-shadow:0 0 22px color-mix(in srgb,var(--earth) 45%,transparent)}
-.pslot.you.joined .qm{animation:none;color:var(--earth)}
-.pslot.you.joined .qm::after{content:"✓"}
-.pslot.you.joined .qm{font-size:0}
-.pslot.you.joined .qm::after{font-size:2.2rem}
-.plus{font:1.8rem/1 var(--mono);color:var(--gold)}
-@keyframes slotpulse{50%{border-color:var(--gold);box-shadow:0 0 20px rgba(217,180,91,.3)}}
-.pbody{min-width:0}
 .party p{margin:8px 0 0;color:var(--dim);max-width:56ch}
 .mail{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:14px}
 .mail code{font:1.4rem var(--mono);color:var(--ink);background:var(--card);padding:6px 10px;user-select:all;overflow-wrap:anywhere}
-.links{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.links{display:flex;flex-direction:column;gap:8px}
 
 .toast{
   position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,140%);
@@ -421,7 +407,6 @@ main.wrap{position:relative;z-index:1}
   .hero{grid-template-columns:minmax(0,1fr);gap:32px;padding-block:32px}
   .hero .tcg{max-width:300px;margin:0 auto}
   .party{grid-template-columns:minmax(0,1fr)}
-  .slots{flex-direction:row;justify-content:center}
   .hud nav{display:none}
 }
 @media (prefers-reduced-motion:reduce){
