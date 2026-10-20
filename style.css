@@ -217,6 +217,10 @@ section{padding-block:48px}
 .tags span{font:1rem/1 var(--mono);padding:3px 6px;background:var(--card-2);color:var(--ink);border-radius:3px}
 .back a{font:700 .78rem var(--display);letter-spacing:.08em;text-transform:uppercase}
 .slot.gone{display:none}
+.flip .front .face-in{grid-template-rows:auto auto auto minmax(0,1fr) auto}
+.flip .front .art{aspect-ratio:16/10}
+.flip .front .flavor{font-size:.8rem;line-height:1.38;scrollbar-width:none}
+.flip .front .flavor::-webkit-scrollbar{display:none}
 .slot::after{content:"";position:absolute;left:12%;right:12%;bottom:-20px;height:18px;border-radius:50%;background:radial-gradient(closest-side,rgba(0,0,0,.6),transparent);z-index:-1;pointer-events:none;animation:shadow 4.5s ease-in-out infinite;animation-delay:calc(var(--i) * -.8s)}
 .slot[data-rar="Em forja"]::after{animation:none}
 @keyframes shadow{50%{transform:scale(.8);opacity:.55}}
