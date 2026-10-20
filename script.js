@@ -113,18 +113,86 @@ function renderHero(){
   $("#foot-l").textContent = `© ${new Date().getFullYear()} ${DATA.fullName} · ${DATA.name}`;
 }
 
+function svgPix(rows,pal){
+  let r = "";
+  rows.forEach((row,y)=>[...row].forEach((ch,x)=>{if (pal[ch]) r += `<rect x="${x}" y="${y}" width="1.02" height="1.02" style="fill:${pal[ch]}"/>`}));
+  return `<svg viewBox="0 0 ${rows[0].length} ${rows.length}" shape-rendering="crispEdges" aria-hidden="true">${r}</svg>`;
+}
+const CORNER = svgPix(["XXXXXX.","XYYYX..","XYXX...","XYX....","XX.....","X......","......."],{X:"#d9b45b",Y:"#fff3c4"});
+const EMBLEM = {
+  water:["...X...","..XXX..",".XXXXX.",".XYXXX.","XXYXXXX",".XXXXX.","..XXX.."],
+  fire:["...X...","..XX...","..XXX.X",".XXYXXX",".XYYYX.","XXYYYXX",".XXXXX."],
+  arcane:["...X...","...X...","XXXYXXX",".XYYYX.","..XXX..",".XX.XX.","X.....X"],
+  metal:[".X.X.X.","XXXXXXX",".XX.XX.","XX...XX",".XX.XX.","XXXXXXX",".X.X.X."],
+  earth:["...X...","..XXX..",".XXYXX.","XXYYYXX","...X...","...X...","..XXX.."]
+};
+const GEM = {"Lendária":"--gold","Épica":"--arcane","Rara":"--water","Comum":"--metal","Em forja":"--metal"};
+
+function hexMix(a,b,t){
+  const p = h => [1,3,5].map(i=>parseInt(h.slice(i,i + 2),16));
+  const A = p(a),B = p(b);
+  return "#" + A.map((v,i)=>Math.round(v + (B[i] - v) * t).toString(16).padStart(2,"0")).join("");
+}
+
+function scene(canvas,el,seed){
+  const W = 40,H = 30,r = rng(seed + "cena"),ctx = canvas.getContext("2d");
+  canvas.width = W;canvas.height = H;
+  const c = getComputedStyle(document.documentElement).getPropertyValue("--" + el).trim();
+  const dot = (x,y,col) => {ctx.fillStyle = col;ctx.fillRect(x | 0,y | 0,1,1)};
+  const sky = ctx.createLinearGradient(0,0,0,H);
+  sky.addColorStop(0,hexMix(c,"#0b0c11",.85));
+  sky.addColorStop(1,hexMix(c,"#0b0c11",.55));
+  ctx.fillStyle = sky;
+  ctx.fillRect(0,0,W,H);
+  for (let i=0;i<9;i++) dot(r() * W,r() * H * .55,r() > .5 ? "#ebe6d855" : "#ebe6d899");
+  if (el === "water"){
+    ctx.fillStyle = hexMix(c,"#0b0c11",.5);
+    ctx.fillRect(0,19,W,H - 19);
+    [19,22,25,28].forEach((y,k)=>{for (let x=(k * 3) % 6;x<W;x+=6){dot(x,y,hexMix(c,"#ffffff",.35));dot(x + 1,y,hexMix(c,"#ffffff",.35));dot(x + 2,y + 1,hexMix(c,"#ffffff",.15))}});
+    [[6,8],[33,5],[28,13]].forEach(([x,y])=>{dot(x,y - 1,"#ebe6d8aa");dot(x - 1,y,"#ebe6d8aa");dot(x + 1,y,"#ebe6d8aa");dot(x,y + 1,"#ebe6d8aa")});
+  } else if (el === "fire"){
+    ctx.fillStyle = "#2a0f08";
+    ctx.fillRect(0,24,W,H - 24);
+    for (let i=0;i<18;i++) dot(r() * W,24 + r() * 6,r() > .5 ? "#ffb347" : "#e0623c");
+    [[4,24],[35,24],[19,24]].forEach(([x,y],k)=>{
+      const f = k === 2 ? ["..y..",".yoy.","yooo.",".ooo."] : [".y.","yoy","ooo"];
+      f.forEach((row,j)=>[...row].forEach((ch,i)=>{if (ch !== ".") dot(x + i - (row.length >> 1),y - f.length + j,ch === "y" ? "#ffe9a8" : "#e0623c")}));
+    });
+  } else if (el === "arcane"){
+    const ring = (rad,step,col) => {for (let a=0;a<Math.PI * 2;a+=step) dot(20 + Math.cos(a) * rad,16 + Math.sin(a) * rad * .8,col)};
+    ring(12,.09,hexMix(c,"#ffffff",.25));
+    ring(8,.22,hexMix(c,"#ffffff",.45));
+    for (let k=0;k<6;k++){const a = k / 6 * Math.PI * 2;dot(20 + Math.cos(a) * 10,16 + Math.sin(a) * 8,"#e9d5ff")}
+    for (let i=0;i<8;i++) dot(r() * W,r() * H,"#e9d5ffaa");
+  } else if (el === "metal"){
+    const gear = (cx,cy,rad,col) => {
+      for (let a=0;a<Math.PI * 2;a+=.12) dot(cx + Math.cos(a) * rad,cy + Math.sin(a) * rad,col);
+      for (let k=0;k<8;k++){const a = k / 8 * Math.PI * 2;dot(cx + Math.cos(a) * (rad + 1),cy + Math.sin(a) * (rad + 1),col);dot(cx + Math.cos(a) * (rad + 2),cy + Math.sin(a) * (rad + 2),col)}
+      dot(cx,cy,col);
+    };
+    gear(8,22,5,"#5a5f6e");
+    gear(32,9,4,"#4a4e5a");
+    ctx.fillStyle = "#1a1c22";
+    ctx.fillRect(0,27,W,3);
+    for (let i=0;i<6;i++) dot(r() * W,26 + r() * 4,"#ffe9a8");
+  } else {
+    ctx.fillStyle = hexMix(c,"#0b0c11",.45);
+    for (let x=0;x<W;x++) ctx.fillRect(x,22 + Math.round(Math.sin(x * .3) * 2),1,H);
+  }
+}
+
 function renderDeck(list){
-  const g = $("#deckGrid");
+  const g = $("#deckGrid"),total = String(DATA.projects.length + 1).padStart(3,"0");
   g.innerHTML = list.map((p,i)=>`<div class="slot deal" data-el="${p.el}" data-rar="${esc(p.rar)}" style="--i:${i}">
     <button class="flip" type="button" aria-label="Virar carta ${esc(p.name)}">
-      <div class="tcg holo tilt front" style="--c:var(--${p.el})"><div class="face-in">
+      <div class="tcg holo tilt front" style="--c:var(--${p.el})">${["tl","tr","bl","br"].map(k=>`<i class="cn ${k}">${CORNER}</i>`).join("")}<div class="face-in">
         <div class="top"><h3>${esc(p.name)}</h3><span class="cost">${p.cost}</span></div>
-        <div class="art"><canvas data-seed="${esc(p.name)}" data-c="--${p.el}"></canvas>${[0,1,2,3,4,5].map(k=>`<span class="fx" style="--k:${k}"></span>`).join("")}</div>
-        <div class="typeline"><span>${esc(p.type)} · ${EL[p.el]}</span><span class="rar">${esc(p.rar)}</span></div>
+        <div class="art"><canvas class="scene" data-el="${p.el}" data-seed="${esc(p.name)}"></canvas><canvas class="mob" data-seed="${esc(p.name)}" data-c="--${p.el}"></canvas>${[0,1,2,3,4,5].map(k=>`<span class="fx" style="--k:${k}"></span>`).join("")}</div>
+        <div class="typeline"><span><i class="emb">${svgPix(EMBLEM[p.el],{X:`var(--${p.el})`,Y:"#fff6dc"})}</i>${esc(p.type)}</span><span class="rar"><i class="gem" style="--g:var(${GEM[p.rar] || "--metal"})"></i>${esc(p.rar)}</span></div>
         <div class="flavor">${p.flavor}</div>
-        <div class="foot"><span>#${String(i+2).padStart(3,"0")}</span><span class="pt">${esc(p.atk)}/${esc(p.def)}</span></div>
+        <div class="foot"><span class="set">NCR · ${String(DATA.projects.indexOf(p) + 2).padStart(3,"0")}/${total} · 1ª ed.</span><span class="pt">${esc(p.atk)}/${esc(p.def)}</span></div>
       </div></div>
-      <div class="tcg back" style="--c:var(--${p.el})"><div class="face-in">
+      <div class="tcg back" style="--c:var(--${p.el})">${["tl","tr","bl","br"].map(k=>`<i class="cn ${k}">${CORNER}</i>`).join("")}<div class="face-in">
         <div class="top"><h3>${esc(p.name)}</h3><span class="cost">${p.cost}</span></div>
         <div class="details">
           <span class="label">Efeitos</span>
@@ -136,7 +204,8 @@ function renderDeck(list){
       </div></div>
     </button>
   </div>`).join("");
-  g.querySelectorAll("canvas").forEach(c=>sprite(c,c.dataset.seed,c.dataset.c));
+  g.querySelectorAll("canvas.mob").forEach(c=>sprite(c,c.dataset.seed,c.dataset.c));
+  g.querySelectorAll("canvas.scene").forEach(c=>scene(c,c.dataset.el,c.dataset.seed));
   g.querySelectorAll(".flip").forEach(b=>b.addEventListener("click",e=>{
     if (e.target.closest("a")) return;
     b.classList.toggle("on");
@@ -195,11 +264,15 @@ function bindTilt(){
       el.style.setProperty("--rx",(.5-y)*18+"deg");
       el.style.setProperty("--mx",x*100+"%");
       el.style.setProperty("--my",y*100+"%");
+      el.style.setProperty("--px",(x-.5).toFixed(3));
+      el.style.setProperty("--py",(y-.5).toFixed(3));
     });
     host.addEventListener("pointerleave",()=>{
       el.classList.remove("live");
       el.style.setProperty("--rx","0deg");
       el.style.setProperty("--ry","0deg");
+      el.style.setProperty("--px","0");
+      el.style.setProperty("--py","0");
     });
   });
 }
