@@ -101,7 +101,12 @@
 
   <section id="party">
     <div class="party">
-      <div>
+      <div class="slots">
+        <div class="pslot me"><canvas id="p1"></canvas><span>P1</span><b>Nacron</b></div>
+        <span class="plus">+</span>
+        <button class="pslot you" id="p2" type="button" aria-label="Entrar na party e copiar o e-mail"><span class="qm">?</span><span>P2</span><b>Você</b></button>
+      </div>
+      <div class="pbody">
         <span class="label">Procurando party</span>
         <h2>Bora construir algo junto?</h2>
         <p id="party-text"></p>
@@ -109,8 +114,8 @@
           <code id="mail"></code>
           <button class="btn" id="copy" type="button">Copiar e-mail</button>
         </div>
+        <div class="links" id="links"></div>
       </div>
-      <div class="links" id="links"></div>
     </div>
   </section>
   </div>

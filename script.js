@@ -4,7 +4,7 @@ const DATA = {
   nick: "Tue",
   title: "<span class=\"hi\">Oi, eu sou o</span><br><em>Nacron</em>",
   klass: "Classe: Full-Stack · Alinhamento: caótico bom",
-  bio: "Faço parte do time de devs da <a href='https://ggstore.dev.br/' target='_blank' rel='noopener'><b>GGSTORE</b></a> e passo os dias criando coisas que deixam qualquer projeto mais vivo: <b>música dentro do jogo</b>, <b>som 3D</b> e <b>APIs</b>. Fora do código eu jogo, monto teclado, fuço em periférico e tiro ideia maluca do papel.",
+  bio: "Faço parte do time de devs da <a href='https://ggstore.dev.br/' target='_blank' rel='noopener'><b>GGSTORE</b></a> e tô sempre inventando alguma coisa nova, seja um projeto do zero ou uma ideia que apareceu do nada e eu resolvi tirar do papel. Gosto de mexer com coisas diferentes, testar umas ideias meio malucas e, de vez em quando, até fazer elas funcionarem de verdade.",
   level: 27,
   xp: 68,
   stats: [["LUA",9,"Scripts em Lua pra FiveM"],["API",8,"APIs e integrações"],["DSG",2,"Design"],["SOM",8,"Áudio e som 3D"],["INS",10,"Ideias malucas"]],
@@ -36,7 +36,7 @@ const DATA = {
     {tag:"Side quest",c:"water",icon:"scroll",t:"Projetos próprios",at:"independente",d:"APIs e ferramentas de mídia feitas por conta própria.",loot:["YT Direct"]},
     {tag:"Treinamento",c:"metal",icon:"book",t:"Informática Avançada e Processamento de Dados",at:"cursos",d:"A base que veio antes de tudo.",loot:[]}
   ],
-  partyText: "Tem um projeto, uma API ou uma ideia maluca pra tirar do papel? Me chama.",
+  partyText: "Tem um projeto, uma API ou uma ideia maluca pra tirar do papel? O slot do P2 tá livre.",
   email: "nacron14@gmail.com",
   links: [["GGSTORE","https://ggstore.dev.br/"],["GitHub","https://github.com/Nacrondev"]]
 };
@@ -111,6 +111,7 @@ function renderHero(){
   fadeWords($("#hero-bio"),1700,40);
   $("#hero-bio").innerHTML = DATA.bio;
   $("#party-text").textContent = DATA.partyText;
+  sprite($("#p1"),DATA.name,"--gold");
   $("#mail").textContent = DATA.email;
   $("#links").innerHTML = DATA.links.map(([t,u])=>`<a class="btn" href="${esc(u)}" target="_blank" rel="noopener">${esc(t)} ↗</a>`).join("");
   $("#foot-l").textContent = `© ${new Date().getFullYear()} ${DATA.fullName} · ${DATA.name}`;
@@ -318,11 +319,18 @@ function toast(msg){
   tt = setTimeout(()=>t.classList.remove("show"),2600);
 }
 
-$("#copy").addEventListener("click",()=>{
+function copyMail(ok){
   const sel = () => {const r = document.createRange();r.selectNodeContents($("#mail"));const s = getSelection();s.removeAllRanges();s.addRange(r);toast("> e-mail selecionado, Ctrl+C pra copiar")};
   try {
-    navigator.clipboard.writeText(DATA.email).then(()=>toast("> e-mail copiado pro inventário"),sel);
+    navigator.clipboard.writeText(DATA.email).then(()=>toast(ok),sel);
   } catch(e){sel()}
+}
+$("#copy").addEventListener("click",()=>copyMail("> e-mail copiado pro inventário"));
+$("#p2").addEventListener("click",e=>{
+  const b = e.currentTarget;
+  b.classList.add("joined");
+  sparkle(e.pageX,e.pageY,18,["#d9b45b","#fff6dc","#a96ddb"]);
+  copyMail("★ Convite aceito! E-mail copiado, me chama lá");
 });
 
 const KONAMI = ["ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowLeft","ArrowRight","ArrowLeft","ArrowRight","b","a"];
